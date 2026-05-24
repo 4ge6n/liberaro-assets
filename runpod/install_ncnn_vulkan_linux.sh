@@ -52,24 +52,34 @@ should_install() {
   return 1
 }
 
-# Kaggle のように NVIDIA GPU は見えていても Vulkan loader だけ抜けている環境がある。
-# ncnn-vulkan は libvulkan.so.1 を直接要求するため、apt が使える環境では自動で補う。
-ensure_vulkan_loader() {
-  if ldconfig -p 2>/dev/null | grep -q 'libvulkan.so.1'; then
+# 必要な前提パッケージ（Vulkan loader と unzip）が揃っているか確認し、
+# 足りないものだけ apt で補う。
+# - Kaggle / 一部の Colab は NVIDIA GPU は見えていても libvulkan.so.1 が抜けている。
+# - runpod/pytorch などの slim 系イメージは unzip が入っておらず、ここを抜くと
+#   後段の `unzip` で set -e により即死する。
+ensure_prereqs() {
+  local missing=()
+  if ! ldconfig -p 2>/dev/null | grep -q 'libvulkan.so.1'; then
+    missing+=(libvulkan1 vulkan-tools)
+  fi
+  if ! command -v unzip >/dev/null 2>&1; then
+    missing+=(unzip)
+  fi
+  if [[ ${#missing[@]} -eq 0 ]]; then
     return 0
   fi
-  echo "==> Vulkan loader の確認"
-  echo "    libvulkan.so.1 が見つからないため、apt で libvulkan1 を入れます"
+  echo "==> 前提パッケージの確認"
+  echo "    不足: ${missing[*]}"
   if ! command -v apt-get >/dev/null 2>&1; then
     echo "    [WARN] apt-get が無いため自動インストールできません"
     return 0
   fi
   if [[ "${EUID:-$(id -u)}" -eq 0 ]]; then
     apt-get update -qq
-    DEBIAN_FRONTEND=noninteractive apt-get install -y -qq libvulkan1 vulkan-tools
+    DEBIAN_FRONTEND=noninteractive apt-get install -y -qq "${missing[@]}"
   elif command -v sudo >/dev/null 2>&1; then
     sudo apt-get update -qq
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq libvulkan1 vulkan-tools
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq "${missing[@]}"
   else
     echo "    [WARN] root/sudo ではないため自動インストールできません"
   fi
@@ -90,8 +100,8 @@ fetch_unzip() {
   unzip -q -o "$TMP_DIR/$zipname" -d "$TMP_DIR"
 }
 
-# ---- Vulkan ICD の有無確認（ない場合は警告） ----
-ensure_vulkan_loader
+# ---- Vulkan ICD / unzip の有無確認（ない場合は apt で補う） ----
+ensure_prereqs
 
 echo "==> Vulkan サポートの確認"
 if command -v vulkaninfo >/dev/null 2>&1; then

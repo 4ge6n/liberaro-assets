@@ -20,8 +20,8 @@ RAW="${LIBERARO_RAW_BASE:-https://raw.githubusercontent.com/4ge6n/liberaro-asset
 WORKDIR="${LIBERARO_WORKDIR:-/opt/liberaro-runpod}"
 mkdir -p "$WORKDIR"
 
-echo "==> runpod SDK を導入"
-pip install --no-cache-dir runpod >/dev/null
+echo "==> runpod SDK / Pillow を導入"
+pip install --no-cache-dir runpod pillow >/dev/null
 
 echo "==> ncnn-vulkan バイナリ + モデルを導入"
 curl -sL --fail "$RAW/install_ncnn_vulkan_linux.sh" -o "$WORKDIR/install.sh"
