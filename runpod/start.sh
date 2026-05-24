@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# RunPod Serverless 用ブートストラップ（公開リポ 4ge6n/realcugan-coreml-models に配置）。
+# RunPod Serverless 用ブートストラップ（公開リポ 4ge6n/liberaro-assets に配置）。
 #
 # 目的: Docker イメージを自前ビルドせず、RunPod の汎用 GPU ベースイメージの
 # 「Container Start Command」からこれ1本を叩くだけでワーカーを立ち上げる。
 # 本体アプリのリポはプライベートなので、ここ（公開リポ）の raw から取得する。
 #
 # RunPod エンドポイントの Container Start Command 例:
-#   bash -c "curl -sL https://raw.githubusercontent.com/4ge6n/realcugan-coreml-models/main/runpod/start.sh | bash"
+#   bash -c "curl -sL https://raw.githubusercontent.com/4ge6n/liberaro-assets/main/runpod/start.sh | bash"
 #
 # エンドポイントの Environment Variables に NVIDIA_DRIVER_CAPABILITIES=all を設定すること
 # （Vulkan を含めないと ncnn-vulkan が GPU を掴めない）。
@@ -16,7 +16,7 @@
 
 set -euo pipefail
 
-RAW="${LIBERARO_RAW_BASE:-https://raw.githubusercontent.com/4ge6n/realcugan-coreml-models/main/runpod}"
+RAW="${LIBERARO_RAW_BASE:-https://raw.githubusercontent.com/4ge6n/liberaro-assets/main/runpod}"
 WORKDIR="${LIBERARO_WORKDIR:-/opt/liberaro-runpod}"
 mkdir -p "$WORKDIR"
 
