@@ -39,3 +39,22 @@
 ## 使い方
 
 アプリの「設定 → 画像超解像 → インストール済モデルを管理」で各エンジンのモデルを選んでダウンロードすると、zip を取得して展開し、デバイス上で `MLModel.compileModel` を実行して `.mlmodelc` 化します。
+
+## Mac サイドカー（`mac-sidecar/`）
+
+iOS アプリから利用する Mac 常駐サーバ群（macOS 標準 Python のみで動作、外部ライブラリ追加なし）。
+Finder からダブルクリックする起動バッジは名前で用途が分かるようにしてある。
+
+| ディレクトリ | 起動バッジ | 役割 |
+| --- | --- | --- |
+| `mac-sidecar/upscale/` | `start server upscale.command` | ncnn-vulkan アップスケールサーバ（waifu2x / Real-CUGAN / Real-ESRGAN）。初回は `install_ncnn_vulkan.command` を先に実行 |
+| `mac-sidecar/irodori-tts/` | `start server irodori-tts.command` | ローカル Irodori (Gradio) をブリッジする TTS バッチサーバ |
+
+詳細は各サブディレクトリの README を参照。
+
+## Irodori TTS Space（`spaces/Liberaro-irodori/`）
+
+Liberaro iOS 互換の Gradio API（`/_describe_runtime` / `/_run_generation`）を公開する
+HuggingFace Space 一式。upstream [Aratako/Irodori-TTS](https://github.com/Aratako/Irodori-TTS)
+の `irodori_tts` パッケージを **v3（`main`）** で vendor 済み。既定 checkpoint は
+`Aratako/Irodori-TTS-600M-v3-VoiceDesign`（base は `Aratako/Irodori-TTS-500M-v3`）。

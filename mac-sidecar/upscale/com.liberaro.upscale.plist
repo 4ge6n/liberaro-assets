@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  launchd agent for liberaro_upscale_server.
+  Install:
+      cp scripts/com.liberaro.upscale.plist ~/Library/LaunchAgents/
+      # edit paths in the copy if your project root is not the iCloud path below
+      launchctl load -w ~/Library/LaunchAgents/com.liberaro.upscale.plist
+
+  Uninstall:
+      launchctl unload -w ~/Library/LaunchAgents/com.liberaro.upscale.plist
+-->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.liberaro.upscale</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>REPLACE_WITH_PROJECT_ROOT/liberaro_upscale_server.py</string>
+        <string>--host</string>
+        <string>0.0.0.0</string>
+        <string>--port</string>
+        <string>8088</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <!-- Set these to the absolute paths of your ncnn-vulkan binaries. -->
+        <!-- Unset entries simply make that engine unavailable; the server still starts. -->
+        <key>LIBERARO_WAIFU2X_BIN</key>
+        <string>/opt/homebrew/bin/waifu2x-ncnn-vulkan</string>
+        <key>LIBERARO_REALCUGAN_BIN</key>
+        <string>/opt/homebrew/bin/realcugan-ncnn-vulkan</string>
+        <key>LIBERARO_REALESRGAN_BIN</key>
+        <string>/opt/homebrew/bin/realesrgan-ncnn-vulkan</string>
+
+        <!-- Optional: override the models-* lookup directory if your binaries
+             don't ship their models alongside (e.g. when you split the install
+             across volumes or use a single shared models dir). -->
+        <!--
+        <key>LIBERARO_WAIFU2X_MODELS_DIR</key>
+        <string>/opt/homebrew/share/waifu2x-ncnn-vulkan</string>
+        <key>LIBERARO_REALCUGAN_MODELS_DIR</key>
+        <string>/opt/homebrew/share/realcugan-ncnn-vulkan</string>
+        <key>LIBERARO_REALESRGAN_MODELS_DIR</key>
+        <string>/opt/homebrew/share/realesrgan-ncnn-vulkan</string>
+        -->
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/liberaro_upscale.out.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/liberaro_upscale.err.log</string>
+</dict>
+</plist>
