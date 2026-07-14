@@ -36,6 +36,12 @@
 
 ライセンス: 元モデルは BSD 3-Clause（Real-ESRGAN）。CoreML 変換物の権利は hanxiao 氏に帰属。
 
+## 透かし除去（DENet）
+
+`DENet256.mlpackage.zip` は [DENet](https://github.com/ai-research-denet/denet) の公開済み LOGO-L 重みを、Liberaro-iOS の局所透かし除去用に固定 256×256 入力の Core ML `mlpackage` に変換したものです（約 40 MB）。
+
+アプリは初回にこの ZIP を取得し、端末上で `.mlmodelc` にコンパイルしてから使います。ユーザーが指定した領域と予測マスクの重なりだけを合成するため、指定範囲外の画像は変更しません。元モデルと重みのライセンスに従って配布します。
+
 ## 使い方
 
 アプリの「設定 → 画像超解像 → インストール済モデルを管理」で各エンジンのモデルを選んでダウンロードすると、zip を取得して展開し、デバイス上で `MLModel.compileModel` を実行して `.mlmodelc` 化します。
